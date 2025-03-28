@@ -486,13 +486,7 @@ if 'authentication_status' not in st.session_state:
 if 'username' not in st.session_state:
     st.session_state['username'] = None
 
-USUARIOS = {
-    "roberto.tiburcio": "rtf2679",
-    "vinicius.ottani": "vco4285",
-    "marcelo.rebellato": "mar4928",
-    "antonio.gorni": "aag1958",
-    "jose.bacalhau": "jbb1985",
-}
+USUARIOS = st.secrets["USERS"]
 
 def autenticar(username, password):
     """
