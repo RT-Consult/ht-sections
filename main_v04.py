@@ -351,7 +351,8 @@ def h_beam_heat_transfer_calculator(min_temp, len_x, len_y, len_w, len_z, delta,
     return temperature_fields, temperaturas, dts, pontos, nx, ny, nz
 
 @st.cache_data
-def create_animation_and_temps(temperature_fields, dts, len_x, len_y, delta, min_temp, t_initial, pontos, nx, ny, nz, animation_interval, section_type):
+def create_animation_and_temps(temperature_fields, dts, len_x, len_y, delta, min_temp, t_initial, pontos, nx, ny, nz, animation_interval, section_type, force_rerun=False):
+
     """
     Cria a animação e calcula os tempos acumulados, usando st.cache_data para armazenar em cache.
     """
@@ -519,6 +520,9 @@ def angle_calculator():
         if key in st.session_state:
             del st.session_state[key]
 
+    #Limpa o cache da animação
+    create_animation_and_temps.clear()
+
     st.title("Angle Heat Transfer Calculator")
 
     st.image("angle_dimensions_complete2.png", use_container_width=True)
@@ -644,7 +648,7 @@ def angle_calculator():
                 return  # Abortar se houver erro no upload
 
     # Botão de Calcular
-    if st.button("Calculate Angle"):
+    if st.button("Calculate Angle", key="calculate_angle"):
         try:
             # Preparar os dados para a função de cálculo
             min_temp = input_data['min_temp']
@@ -653,7 +657,7 @@ def angle_calculator():
             len_w = input_data['len_w']
             len_z = input_data['len_z']
             #delta = input_data['delta']
-            delta = min(len_w/8, len_z/8)
+            delta = min(len_w/8, len_z/8, 5)
             tamb = input_data['tamb']
             t_initial = input_data['t_initial']
 
@@ -678,7 +682,7 @@ def angle_calculator():
             animation_interval = 30
 
             # Chamar a função que cria a animação e calcula os tempos
-            angle_tempos, angle_animation_path = create_animation_and_temps(temperature_fields, dts, len_x, len_y, delta, min_temp, t_initial, pontos, nx, ny, nz, animation_interval, "angle")
+            angle_tempos, angle_animation_path = create_animation_and_temps(temperature_fields, dts, len_x, len_y, delta, min_temp, t_initial, pontos, nx, ny, nz, animation_interval, "angle", force_rerun=True)
 
             # Exibir a animação no Streamlit
             st.subheader("Temperature Distribution Animation")
@@ -781,6 +785,9 @@ def h_beam_calculator():
     for key in ['angle_tempos', 'angle_temperaturas', 'angle_pontos', 'angle_start_temp', 'angle_end_temp', 'angle_nx', 'angle_ny', 'angle_nz', 'angle_nw']:
         if key in st.session_state:
             del st.session_state[key]
+
+    #Limpa o cache da animação
+    create_animation_and_temps.clear()
 
     st.title("H-Beam Heat Transfer Calculator")
 
@@ -907,7 +914,7 @@ def h_beam_calculator():
                 return  # Abortar se houver erro no upload
 
     # Botão de Calcular
-    if st.button("Calculate H-Beam"):
+    if st.button("Calculate H-Beam", key="calculate_hbeam"):
         try:
             # Preparar os dados para a função de cálculo
             min_temp = input_data['min_temp']
@@ -916,7 +923,7 @@ def h_beam_calculator():
             len_w = input_data['len_w']
             len_z = input_data['len_z']
             #delta = input_data['delta']
-            delta = min(len_w/4, len_z/4)
+            delta = min(len_w/5, len_z/5, 5)
             tamb = input_data['tamb']
             t_initial = input_data['t_initial']
 
@@ -941,7 +948,7 @@ def h_beam_calculator():
             animation_interval = 30
 
             # Chamar a função que cria a animação e calcula os tempos
-            hbeam_tempos, hbeam_animation_path = create_animation_and_temps(temperature_fields, dts, len_x, len_y, delta, min_temp, t_initial, pontos, nx, ny, nz, animation_interval, "h_beam")
+            hbeam_tempos, hbeam_animation_path = create_animation_and_temps(temperature_fields, dts, len_x, len_y, delta, min_temp, t_initial, pontos, nx, ny, nz, animation_interval, "h_beam", force_rerun=True)
 
             # Exibir a animação no Streamlit
             st.subheader("Temperature Distribution Animation")
